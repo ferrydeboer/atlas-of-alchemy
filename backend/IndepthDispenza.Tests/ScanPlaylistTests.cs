@@ -13,6 +13,7 @@ public class ScanPlaylistTests
 {
     private Mock<ILogger<ScanPlaylist>> _mockLogger;
     private Mock<IPlaylistScanService> _mockPlaylistScanService;
+    private Mock<IVideoAnalysisRepository> _mockRepository;
     private ScanPlaylist _scanPlaylist;
 
     [SetUp]
@@ -20,7 +21,8 @@ public class ScanPlaylistTests
     {
         _mockLogger = new Mock<ILogger<ScanPlaylist>>();
         _mockPlaylistScanService = new Mock<IPlaylistScanService>();
-        _scanPlaylist = new ScanPlaylist(_mockLogger.Object, _mockPlaylistScanService.Object);
+        _mockRepository = new Mock<IVideoAnalysisRepository>();
+        _scanPlaylist = new ScanPlaylist(_mockLogger.Object, _mockPlaylistScanService.Object, _mockRepository.Object);
     }
 
     [Test]
@@ -76,5 +78,26 @@ public class ScanPlaylistTests
 
         // Act & Assert
         Assert.ThrowsAsync<Exception>(async () => await _scanPlaylist.Run(req, playlistId, limit, filters));
+    }
+
+    [Test]
+    public async Task ScheduledRun_TriggersScanWithCorrectParameters()
+    {
+        // Arrange
+        int analyzedCount = 10;
+        _mockRepository.Setup(r => r.GetAnalyzedVideoCountAsync()).ReturnsAsync(analyzedCount);
+        _mockPlaylistScanService.Setup(s => s.ScanPlaylistAsync(It.IsAny<PlaylistScanRequest>()))
+            .ReturnsAsync(ServiceResult<int>.Success(5));
+
+        // Act
+        await _scanPlaylist.ScheduledRun(null!);
+
+        // Assert
+        _mockRepository.Verify(r => r.GetAnalyzedVideoCountAsync(), Times.Once);
+        _mockPlaylistScanService.Verify(s => s.ScanPlaylistAsync(It.Is<PlaylistScanRequest>(r => 
+            r.PlaylistId == "PLD4EAA8F8C9148A1B" && 
+            r.Limit == analyzedCount + 25 && 
+            r.Filters != null && 
+            r.Filters.SkipExisting)), Times.Once);
     }
 }

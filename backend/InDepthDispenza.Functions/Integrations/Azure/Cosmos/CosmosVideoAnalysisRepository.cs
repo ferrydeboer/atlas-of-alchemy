@@ -87,6 +87,28 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
         }
     }
 
+    public async Task<int> GetAnalyzedVideoCountAsync()
+    {
+        try
+        {
+            var container = await GetOrCreateContainerAsync();
+            var query = new QueryDefinition("SELECT VALUE COUNT(1) FROM c");
+            var iterator = container.GetItemQueryIterator<int>(query);
+            var count = 0;
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync();
+                count += response.FirstOrDefault();
+            }
+            return count;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Error counting analyzed videos");
+            return 0;
+        }
+    }
+
     private sealed class CosmosVideoAnalysisDocument
     {
         public string id { get; set; } = string.Empty;

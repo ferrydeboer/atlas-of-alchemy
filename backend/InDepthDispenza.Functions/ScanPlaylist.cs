@@ -10,11 +10,16 @@ public class ScanPlaylist
 {
     private readonly ILogger<ScanPlaylist> _logger;
     private readonly IPlaylistScanService _playlistScanService;
+    private readonly IVideoAnalysisRepository _videoAnalysisRepository;
 
-    public ScanPlaylist(ILogger<ScanPlaylist> logger, IPlaylistScanService playlistScanService)
+    public ScanPlaylist(
+        ILogger<ScanPlaylist> logger, 
+        IPlaylistScanService playlistScanService,
+        IVideoAnalysisRepository videoAnalysisRepository)
     {
         _logger = logger;
         _playlistScanService = playlistScanService;
+        _videoAnalysisRepository = videoAnalysisRepository;
     }
 
     [Function("ScanPlaylist")]
@@ -42,6 +47,28 @@ public class ScanPlaylist
 
         _logger.LogInformation("Playlist scan completed successfully. Videos processed: {Count}", result.Data);
         return new OkObjectResult(new ScanPlaylistResult(result.Data));
+    }
+
+    [Function("ScheduledPlaylistScan")]
+    public async Task ScheduledRun([TimerTrigger("0 0 10 * * *")] TimerInfo myTimer)
+    {
+        _logger.LogInformation("ScheduledPlaylistScan triggered at: {Time}", DateTime.UtcNow);
+
+        const string hardcodedPlaylistId = "PLD4EAA8F8C9148A1B";
+        
+        // Count analyzed videos
+        var analyzedCount = await _videoAnalysisRepository.GetAnalyzedVideoCountAsync();
+        var limit = analyzedCount + 25;
+        
+        _logger.LogInformation("Analyzed videos count: {AnalyzedCount}, setting limit to: {Limit}", analyzedCount, limit);
+
+        // Create request with skip-existing filter
+        var request = new PlaylistScanRequest(hardcodedPlaylistId, limit, VideoFilters.Parse("skip-existing"));
+
+        // Execute scan
+        var result = await _playlistScanService.ScanPlaylistAsync(request);
+
+        _logger.LogInformation("Scheduled playlist scan completed. Videos processed: {Count}", result.Data);
     }
 }
 

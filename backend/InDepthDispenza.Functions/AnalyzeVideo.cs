@@ -81,7 +81,7 @@ public class AnalyzeVideo
         {
             throw new InvalidOperationException("Queue message could not be deserialized into VideoInfo or missing VideoId");
         }
-
+        
         var result = await _transcriptAnalyzer.AnalyzeTranscriptAsync(video.VideoId);
         if (!result.IsSuccess)
         {
