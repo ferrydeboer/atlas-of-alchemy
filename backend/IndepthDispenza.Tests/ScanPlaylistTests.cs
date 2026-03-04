@@ -96,7 +96,7 @@ public class ScanPlaylistTests
         _mockRepository.Verify(r => r.GetAnalyzedVideoCountAsync(), Times.Once);
         _mockPlaylistScanService.Verify(s => s.ScanPlaylistAsync(It.Is<PlaylistScanRequest>(r => 
             r.PlaylistId == "PLD4EAA8F8C9148A1B" && 
-            r.Limit == analyzedCount + 25 && 
+            r.Limit == analyzedCount + 50 && 
             r.Filters != null && 
             r.Filters.SkipExisting)), Times.Once);
     }

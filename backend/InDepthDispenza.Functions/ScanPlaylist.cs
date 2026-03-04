@@ -58,7 +58,9 @@ public class ScanPlaylist
         
         // Count analyzed videos
         var analyzedCount = await _videoAnalysisRepository.GetAnalyzedVideoCountAsync();
-        var limit = analyzedCount + 25;
+        // This limits the total but this does not guarantee a total given the skip-existing filter.
+        // Hence it's not higher than the 25 transcripts allowed.
+        var limit = analyzedCount + 50;
         
         _logger.LogInformation("Analyzed videos count: {AnalyzedCount}, setting limit to: {Limit}", analyzedCount, limit);
 
