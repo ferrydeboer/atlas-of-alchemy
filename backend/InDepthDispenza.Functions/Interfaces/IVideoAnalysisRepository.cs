@@ -6,6 +6,6 @@ public interface IVideoAnalysisRepository
 {
     Task<ServiceResult> SaveAnalysisAsync(VideoAnalysisDocument document);
     Task<ServiceResult<VideoAnalysisDocument?>> GetAnalysisAsync(string videoId);
-    Task<ServiceResult> SaveFullLlmResponseAsync(string id, DateTimeOffset analyzedAt, string? taxonomyVersion, LlmResponse llm);
+    Task<ServiceResult> SaveFullLlmResponseAsync(string id, DateTimeOffset analyzedAt, string? taxonomyVersion, string? versionLabel, LlmResponse llm);
     Task<int> GetAnalyzedVideoCountAsync();
 }

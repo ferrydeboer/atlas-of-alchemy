@@ -64,7 +64,7 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
     }
 
     // Store the full LLM response payload with metadata
-    public async Task<ServiceResult> SaveFullLlmResponseAsync(string id, DateTimeOffset analyzedAt, string? taxonomyVersion, LlmResponse llm)
+    public async Task<ServiceResult> SaveFullLlmResponseAsync(string id, DateTimeOffset analyzedAt, string? taxonomyVersion, string? versionLabel, LlmResponse llm)
     {
         try
         {
@@ -75,6 +75,7 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
                 id = id,
                 analyzedAt = analyzedAt,
                 taxonomyVersion = taxonomyVersion,
+                versionLabel = versionLabel,
                 response = llm
             };
             await container.UpsertItemAsync(doc, new PartitionKey(id));
@@ -190,6 +191,7 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
         public string id { get; set; } = string.Empty;
         public DateTimeOffset analyzedAt { get; set; }
         public string? taxonomyVersion { get; set; }
+        public string? versionLabel { get; set; }
         public LlmResponse response { get; set; } = default!;
     }
 }

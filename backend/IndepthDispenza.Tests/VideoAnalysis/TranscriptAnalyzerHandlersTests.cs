@@ -66,6 +66,7 @@ public class TranscriptAnalyzerHandlersTests
                 It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>(),
                 It.IsAny<string?>(),
+                It.IsAny<string?>(),
                 It.IsAny<LlmResponse>()))
             .ReturnsAsync(ServiceResult.Success());
 
@@ -98,6 +99,7 @@ public class TranscriptAnalyzerHandlersTests
         repo.Verify(r => r.SaveFullLlmResponseAsync(
             It.Is<string>(id => id == "vid-123"),
             It.IsAny<DateTimeOffset>(),
+            It.IsAny<string?>(),
             It.IsAny<string?>(),
             It.IsAny<LlmResponse>()), Times.Once);
     }

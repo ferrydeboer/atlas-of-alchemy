@@ -185,6 +185,7 @@ public class TranscriptAnalyzer : ITranscriptAnalyzer
                 id: _lastVideoId!,
                 analyzedAt: _lastAnalyzedAt,
                 taxonomyVersion: taxonomyVersion ?? _lastTaxonomyVersion,
+                versionLabel: null,
                 llm: _lastLlmResponse);
 
             return store;

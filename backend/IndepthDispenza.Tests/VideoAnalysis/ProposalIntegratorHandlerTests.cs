@@ -140,8 +140,9 @@ public class ProposalIntegratorHandlerTests
                 It.IsAny<string>(),
                 It.IsAny<DateTimeOffset>(),
                 It.IsAny<string?>(),
+                It.IsAny<string?>(),
                 It.IsAny<LlmResponse>()))
-            .Callback<string, DateTimeOffset, string?, LlmResponse>((_, _, _, dto) => stored = dto)
+            .Callback<string, DateTimeOffset, string?, string?, LlmResponse>((_, _, _, _, dto) => stored = dto)
             .ReturnsAsync(ServiceResult.Success());
 
         var handlers = new IVideoAnalyzedHandler[]
