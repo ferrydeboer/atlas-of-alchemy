@@ -39,23 +39,25 @@ public class PlaylistScanService : IPlaylistScanService
         {
             totalCount++;
 
-            if (!await ShouldProcessVideoAsync(video, request))
+            var videoWithVersion = video with { VersionLabel = request.VersionLabel };
+
+            if (!await ShouldProcessVideoAsync(videoWithVersion, request))
             {
                 continue;
             }
 
             try
             {
-                await _queueService.EnqueueVideoAsync(video);
+                await _queueService.EnqueueVideoAsync(videoWithVersion);
                 successCount++;
             }
             catch (QueueTransientException ex)
             {
-                _logger.LogWarning(ex, "Transient error enqueuing video {VideoId}. Skipping item.", video.VideoId);
+                _logger.LogWarning(ex, "Transient error enqueuing video {VideoId}. Skipping item.", videoWithVersion.VideoId);
             }
             catch (QueueMessageException ex)
             {
-                _logger.LogError(ex, "Permanent message error for video {VideoId}. Skipping item.", video.VideoId);
+                _logger.LogError(ex, "Permanent message error for video {VideoId}. Skipping item.", videoWithVersion.VideoId);
             }
         }
 

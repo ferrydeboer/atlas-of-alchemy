@@ -62,12 +62,12 @@ namespace IndepthDispenza.Tests.VideoAnalysis
             // Arrange
             var request = _fixture.Create<PlaylistScanRequest>() with { Filters = VideoFilters.Parse("test-filter") };
             var videos = _fixture.CreateMany<VideoInfo>(3).ToList();
-            
+
             // Second video should be filtered out
             var filterMock = new Mock<IVideoFilter>();
-            filterMock.Setup(x => x.ShouldProcessAsync(videos[0], request)).ReturnsAsync(true);
-            filterMock.Setup(x => x.ShouldProcessAsync(videos[1], request)).ReturnsAsync(false);
-            filterMock.Setup(x => x.ShouldProcessAsync(videos[2], request)).ReturnsAsync(true);
+            filterMock.Setup(x => x.ShouldProcessAsync(It.Is<VideoInfo>(v => v.VideoId == videos[0].VideoId), request)).ReturnsAsync(true);
+            filterMock.Setup(x => x.ShouldProcessAsync(It.Is<VideoInfo>(v => v.VideoId == videos[1].VideoId), request)).ReturnsAsync(false);
+            filterMock.Setup(x => x.ShouldProcessAsync(It.Is<VideoInfo>(v => v.VideoId == videos[2].VideoId), request)).ReturnsAsync(true);
             _filters.Add(filterMock.Object);
 
             _playlistServiceMock.Setup(x => x.GetPlaylistVideosAsync(request.PlaylistId, request.Limit, It.IsAny<Func<VideoInfo, bool>>()))
@@ -82,9 +82,9 @@ namespace IndepthDispenza.Tests.VideoAnalysis
             // Assert
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Data, Is.EqualTo(2));
-            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(videos[0]), Times.Once);
-            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(videos[1]), Times.Never);
-            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(videos[2]), Times.Once);
+            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(It.Is<VideoInfo>(v => v.VideoId == videos[0].VideoId)), Times.Once);
+            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(It.Is<VideoInfo>(v => v.VideoId == videos[1].VideoId)), Times.Never);
+            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(It.Is<VideoInfo>(v => v.VideoId == videos[2].VideoId)), Times.Once);
         }
 
         [Test]
@@ -93,10 +93,10 @@ namespace IndepthDispenza.Tests.VideoAnalysis
             // Arrange
             var request = _fixture.Create<PlaylistScanRequest>();
             var videos = _fixture.CreateMany<VideoInfo>(2).ToList();
-            
+
             var filterMock = new Mock<IVideoFilter>();
-            filterMock.Setup(x => x.ShouldProcessAsync(videos[0], request)).ThrowsAsync(new Exception("Filter error"));
-            filterMock.Setup(x => x.ShouldProcessAsync(videos[1], request)).ReturnsAsync(true);
+            filterMock.Setup(x => x.ShouldProcessAsync(It.Is<VideoInfo>(v => v.VideoId == videos[0].VideoId), request)).ThrowsAsync(new Exception("Filter error"));
+            filterMock.Setup(x => x.ShouldProcessAsync(It.Is<VideoInfo>(v => v.VideoId == videos[1].VideoId), request)).ReturnsAsync(true);
             _filters.Add(filterMock.Object);
 
             _playlistServiceMock.Setup(x => x.GetPlaylistVideosAsync(request.PlaylistId, request.Limit, It.IsAny<Func<VideoInfo, bool>>()))
@@ -111,8 +111,8 @@ namespace IndepthDispenza.Tests.VideoAnalysis
             // Assert
             Assert.That(result.IsSuccess, Is.True);
             Assert.That(result.Data, Is.EqualTo(1)); // Only the second video should be enqueued
-            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(videos[0]), Times.Never);
-            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(videos[1]), Times.Once);
+            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(It.Is<VideoInfo>(v => v.VideoId == videos[0].VideoId)), Times.Never);
+            _queueServiceMock.Verify(x => x.EnqueueVideoAsync(It.Is<VideoInfo>(v => v.VideoId == videos[1].VideoId)), Times.Once);
         }
 
         [Test]
@@ -155,6 +155,63 @@ namespace IndepthDispenza.Tests.VideoAnalysis
 
             // Act & Assert
             Assert.ThrowsAsync<QueueConfigurationException>(async () => await InvokeScanPlaylistAsync(request));
+        }
+
+        [Test]
+        public async Task ScanPlaylistAsync_WithVersionLabel_PropagatesVersionLabelToEnqueuedVideos()
+        {
+            // Arrange
+            var versionLabel = "v2.0-taxonomy";
+            var request = _fixture.Create<PlaylistScanRequest>() with
+            {
+                Filters = VideoFilters.Empty,
+                VersionLabel = versionLabel
+            };
+            var videos = _fixture.CreateMany<VideoInfo>(2).Select(v => v with { VersionLabel = null }).ToList();
+            var enqueuedVideos = new List<VideoInfo>();
+
+            _playlistServiceMock.Setup(x => x.GetPlaylistVideosAsync(request.PlaylistId, request.Limit, It.IsAny<Func<VideoInfo, bool>>()))
+                .Returns(ToAsyncEnumerable(videos));
+
+            _queueServiceMock.Setup(x => x.EnqueueVideoAsync(It.IsAny<VideoInfo>()))
+                .Callback<VideoInfo>(v => enqueuedVideos.Add(v))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await InvokeScanPlaylistAsync(request);
+
+            // Assert
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(enqueuedVideos, Has.Count.EqualTo(2));
+            Assert.That(enqueuedVideos, Has.All.Property(nameof(VideoInfo.VersionLabel)).EqualTo(versionLabel));
+        }
+
+        [Test]
+        public async Task ScanPlaylistAsync_WithoutVersionLabel_EnqueuesVideosWithNullVersionLabel()
+        {
+            // Arrange
+            var request = _fixture.Create<PlaylistScanRequest>() with
+            {
+                Filters = VideoFilters.Empty,
+                VersionLabel = null
+            };
+            var videos = _fixture.CreateMany<VideoInfo>(2).Select(v => v with { VersionLabel = null }).ToList();
+            var enqueuedVideos = new List<VideoInfo>();
+
+            _playlistServiceMock.Setup(x => x.GetPlaylistVideosAsync(request.PlaylistId, request.Limit, It.IsAny<Func<VideoInfo, bool>>()))
+                .Returns(ToAsyncEnumerable(videos));
+
+            _queueServiceMock.Setup(x => x.EnqueueVideoAsync(It.IsAny<VideoInfo>()))
+                .Callback<VideoInfo>(v => enqueuedVideos.Add(v))
+                .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await InvokeScanPlaylistAsync(request);
+
+            // Assert
+            Assert.That(result.IsSuccess, Is.True);
+            Assert.That(enqueuedVideos, Has.Count.EqualTo(2));
+            Assert.That(enqueuedVideos, Has.All.Property(nameof(VideoInfo.VersionLabel)).Null);
         }
 
         private async Task<ServiceResult<int>> InvokeScanPlaylistAsync(PlaylistScanRequest request)
