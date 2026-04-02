@@ -216,6 +216,28 @@ public class AnalyzeVideoIntegrationTests : IntegrationTestBase
     }
 
     [Test]
+    public async Task StoredDocument_ContainsCorpusMetadata_WhenAnalyzed()
+    {
+        // Given a video with a transcript
+        const string transcriptText = "meditation practice transforms lives";
+        await SetupTranscriptResponse(_testVideoId, transcriptText);
+        await WireMockConfig.Grok.SetupAsync();
+
+        // When I analyze the video
+        var response = await InvokeAnalyzeVideoAsync(_testVideoId);
+        response.IsSuccess.Should().BeTrue(response.Content);
+
+        // Then the stored document should contain corpus metadata fields
+        var documents = await GetAllStoredLlmDocumentsFromCosmos(_testVideoId);
+        documents.Should().HaveCount(1);
+
+        var doc = documents.Single();
+        doc.sourceId.Should().Be(_testVideoId, "sourceId should be extracted from the versioned document ID");
+        doc.source.Should().Be("youtube", "source should be youtube for all videos");
+        doc.corpusId.Should().Be("joedispenza", "corpusId should be joedispenza");
+    }
+
+    [Test]
     public async Task AchievementsFromLlm_AreStoredInCosmos()
     {
         // Given a transcript exists
@@ -438,6 +460,9 @@ public class AnalyzeVideoIntegrationTests : IntegrationTestBase
         public DateTimeOffset analyzedAt { get; set; }
         public string? taxonomyVersion { get; set; }
         public string? versionLabel { get; set; }
+        public string? sourceId { get; set; }
+        public string source { get; set; } = string.Empty;
+        public string corpusId { get; set; } = string.Empty;
         public LlmResponse response { get; set; } = null!;
     }
 

@@ -1,4 +1,5 @@
 using InDepthDispenza.Functions.Interfaces;
+using InDepthDispenza.Functions.VideoAnalysis;
 using InDepthDispenza.Functions.VideoAnalysis.Interfaces;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Logging;
@@ -76,6 +77,7 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
                 analyzedAt = analyzedAt,
                 taxonomyVersion = taxonomyVersion,
                 versionLabel = versionLabel,
+                sourceId = VersionedDocumentId.ExtractVideoId(id),
                 response = llm
             };
             await container.UpsertItemAsync(doc, new PartitionKey(id));
@@ -192,6 +194,9 @@ public class CosmosVideoAnalysisRepository : CosmosRepositoryBase, IVideoAnalysi
         public DateTimeOffset analyzedAt { get; set; }
         public string? taxonomyVersion { get; set; }
         public string? versionLabel { get; set; }
+        public string? sourceId { get; set; }
+        public string source { get; set; } = "youtube";
+        public string corpusId { get; set; } = "joedispenza";
         public LlmResponse response { get; set; } = default!;
     }
 }
