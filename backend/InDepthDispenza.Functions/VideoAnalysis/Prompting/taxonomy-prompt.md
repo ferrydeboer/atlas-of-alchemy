@@ -50,6 +50,12 @@ If something fits none of the four attribute functions, it is almost certainly a
 
 ---
 
+### Classification Boundaries
+
+**`contribution` requires action beyond the testimonial itself.**
+The act of giving a testimonial, sharing a healing story at a retreat, or appearing in a video is NOT a contribution achievement — it is the video itself. Do not classify the testimony as `contribution > teaching_or_sharing > public_testimony` unless the person describes a distinct act of outreach, advocacy, or sharing that exists independently of this video. Examples of valid `public_testimony`: testifying before a legislative body, publishing a book about their experience, speaking at an independent public event. Examples of invalid use: "shared her story at the retreat," "gave this testimonial to help others."
+
+---
 ## Proposal Rules
 
 Proposals belong inside the related achievement. The `proposals` array should frequently be empty — that means the taxonomy is working well.
