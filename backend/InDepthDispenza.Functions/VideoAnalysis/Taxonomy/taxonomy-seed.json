@@ -710,11 +710,13 @@
       }
     },
     "other": {
-      "subcategories": [
-        "pet_healing",
-        "hybrid_story"
-      ],
-      "attributes": []
+      "other": {
+        "subcategories":[
+          "pet_healing",
+          "hybrid_story"
+        ],
+        "attributes": []
+      }
     }
   },
   "updatedAt": "2026-04-02T00:00:00.0000000+00:00",
