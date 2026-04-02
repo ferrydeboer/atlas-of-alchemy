@@ -26,6 +26,78 @@ The taxonomy has four levels. Understanding what belongs at each level is essent
 
 ---
 
+## Type Definitions
+
+### transformation
+
+`transformation` requires a **describable, pointable moment** — something the person can
+locate in time. If no such moment is described, do not classify as transformation, even if
+the person uses the word "transformation" or "changed." Gradual change over time belongs
+in the `details` field of the healing or other achievement, not as a transformation entry.
+
+**Three categories and when to use each:**
+
+`somatic_breakthrough` — A physical or bodily event *during or immediately after* meditation
+or coherence healing: energy surges, trembling, heat, involuntary movement, spontaneous
+vocalization. No inner decision or realization is required — the physical event itself is
+the achievement.
+
+`identity_shift` — A lasting change in self-perception, self-worth, or life direction that
+the person describes as a moment of knowing or decision. Includes: restored sense of
+worthiness, lifelong behavioral pattern broken, boundary set for the first time — and
+**any irreversible decision or action taken from inner guidance**, even if quiet and
+undramatic. If someone stopped chemo, left a job, or ended a relationship because an inner
+knowing overrode external reasoning, that is `identity_shift`. The decision is the moment.
+Use `inner_guidance_followed` as subcategory when the person explicitly frames it as
+following an inner voice, signal, or knowing. Use `surrender_moment` when they describe
+consciously releasing control after resistance.
+
+`mystical_experience` — An altered perception of reality, time, space, or self *during
+meditation*. Must be an **internal** experience — a vision, dissolution of self, sense of
+oneness, akashic insight, encounter with a presence. An external sign (thunder, a found
+object, skywriting) is NOT a mystical_experience — it belongs in
+`manifestation > synchronicity`.
+
+---
+
+### transformation vs manifestation — the decisive question
+
+> Did this happen *inside* the person, or *outside* in the world?
+> - Inside (internal state change) → `transformation`
+> - Outside (external object, event, circumstance) → `manifestation > synchronicity`
+
+A single event often produces both. The skywriting is `manifestation > synchronicity`.
+The internal surrender or decision that followed it is a separate
+`transformation > identity_shift` achievement. **Extract both when both are present.**
+
+---
+
+### healing vs transformation
+
+A physical symptom improving or resolving is always `healing`, even if it followed a
+meditation experience. The meditation experience *itself* — if described as notable — is a
+separate `transformation` achievement. Extract both when both are present.
+
+---
+
+## Completeness Check
+
+Before finalizing your response, verify:
+
+- [ ] Every distinct reported outcome extracted — not only the most dramatic one?
+- [ ] Did the person describe a quiet decision or inner knowing that changed their course?
+  If yes → `transformation > identity_shift` (subcategory: `inner_guidance_followed`
+  or `surrender_moment`)
+- [ ] Did the person describe what the meditation *felt like*, separately from what healed?
+  If yes → consider `transformation > somatic_breakthrough` or `mystical_experience`
+- [ ] Did the person describe an external sign or synchronicity separately from an inner
+  response to it? If yes → extract both `manifestation > synchronicity` and
+  `transformation > identity_shift`
+- [ ] Did the person share the work with others as a concrete act outside this testimonial?
+  If yes → `contribution` (the act must be described, not merely implied)
+
+---
+
 ## Tag Extraction Rules
 
 1. **Use existing tags** — Always prefer existing taxonomy tags. Search the entire taxonomy before considering a proposal.

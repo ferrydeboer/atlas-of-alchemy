@@ -1,5 +1,5 @@
 {
-  "id": "v8.4",
+  "id": "v9.0",
   "taxonomy": {
     "healing": {
       "mental_health": {
@@ -20,7 +20,8 @@
           "grief",
           "rage",
           "insomnia",
-          "chronic_stress"
+          "chronic_stress",
+          "night_terrors"
         ],
         "attributes": [
           "alcohol_addiction",
@@ -61,7 +62,9 @@
           "neuroendocrine_cancer",
           "vocal_cord_cancer",
           "unknown_primary",
-          "rare"
+          "rare",
+          "parotid_tumor",
+          "esophageal_cancer"
         ],
         "attributes": [
           "stage_one",
@@ -100,7 +103,11 @@
           "addisons_disease",
           "giant_cell_arteritis",
           "food_allergies",
-          "ankylosing_spondylitis"
+          "ankylosing_spondylitis",
+          "breast_implant_illness",
+          "familial_mediterranean_fever",
+          "wegeners_granulomatosis",
+          "mixed_connective_tissue_disorder"
         ],
         "attributes": [
           "flare_ups",
@@ -150,7 +157,18 @@
           "amyotrophic_lateral_sclerosis",
           "alzheimers",
           "paralysis",
-          "brain_fog"
+          "brain_fog",
+          "trigeminal_neuralgia",
+          "limbic_trauma",
+          "occipital_neuralgia",
+          "dysautonomia",
+          "nystagmus",
+          "brain_inflammation",
+          "cluster_headaches",
+          "optic_neuritis",
+          "neuritis",
+          "progressive_degenerative_disease",
+          "hydrocephalus"
         ],
         "attributes": [
           "vision_impairment",
@@ -179,7 +197,8 @@
           "memory_loss",
           "word_finding_difficulty",
           "medically_verified",
-          "emf_corpus_specific"
+          "emf_corpus_specific",
+          "incurable"
         ]
       },
       "musculoskeletal": {
@@ -206,7 +225,20 @@
           "cam_impingement",
           "avascular_necrosis",
           "hammer_toe",
-          "hip_pain"
+          "hip_pain",
+          "tendonitis",
+          "clavicle_pain",
+          "neck_pain",
+          "frozen_shoulder",
+          "spinal_stenosis",
+          "scoliosis",
+          "achilles_tendon_injury",
+          "gout",
+          "spinal_canal_stenosis",
+          "bursitis",
+          "body_pain",
+          "dupuytrens_syndrome",
+          "degenerative_disc_disease"
         ],
         "attributes": [
           "acute_trauma",
@@ -221,7 +253,9 @@
           "bilateral",
           "steroid_induced",
           "postpartum",
-          "medically_verified"
+          "medically_verified",
+          "shoulder",
+          "hip"
         ]
       },
       "reproductive": {
@@ -234,7 +268,10 @@
           "hyperemesis_gravidarum",
           "perineal_tear",
           "anal_sphincter_injury",
-          "breast_cyst"
+          "breast_cyst",
+          "turner_syndrome",
+          "menopause",
+          "breast_fibrosis"
         ],
         "attributes": [
           "ivf_failure",
@@ -244,7 +281,10 @@
           "hereditary",
           "severe",
           "fecal_incontinence",
-          "medically_verified"
+          "medically_verified",
+          "fetal",
+          "chromosomal_reversal",
+          "hormone_imbalance"
         ]
       },
       "sensory": {
@@ -259,7 +299,12 @@
           "degenerative_myopia",
           "macular_hemorrhage",
           "astigmatism",
-          "genetic_vision_impairment"
+          "genetic_vision_impairment",
+          "myopia",
+          "cataract",
+          "menieres_disease",
+          "palinopsia",
+          "vision_loss"
         ],
         "attributes": [
           "high_eye_pressure",
@@ -283,7 +328,8 @@
           "mole",
           "skin_lesions",
           "alopecia",
-          "premature_graying"
+          "premature_graying",
+          "cold_urticaria"
         ],
         "attributes": [
           "chronic",
@@ -291,7 +337,10 @@
           "hereditary",
           "reversal",
           "meditation_induced",
-          "medically_verified"
+          "medically_verified",
+          "life_threatening",
+          "cold_triggered",
+          "anaphylactic"
         ]
       },
       "respiratory": {
@@ -303,7 +352,9 @@
           "pneumonia",
           "cystic_fibrosis",
           "sarcoidosis",
-          "bronchitis"
+          "bronchitis",
+          "rhinitis",
+          "sleep_apnea"
         ],
         "attributes": [
           "chronic",
@@ -337,7 +388,9 @@
           "hypertrophic_cardiomyopathy",
           "heart_failure",
           "heart_valve_replacement",
-          "stroke"
+          "stroke",
+          "inappropriate_sinus_tachycardia",
+          "pulmonary_hypertension"
         ],
         "attributes": [
           "congenital",
@@ -460,7 +513,12 @@
           "enlarged_testicle",
           "interstitial_cystitis",
           "urinary_tract_infection",
-          "chronic_kidney_disease"
+          "chronic_kidney_disease",
+          "enlarged_prostate",
+          "overactive_bladder",
+          "microhematuria",
+          "ureteral_damage",
+          "kidney_mass"
         ],
         "attributes": [
           "congenital",
@@ -472,7 +530,10 @@
           "pelvic_surgery",
           "urinary_frequency",
           "painful",
-          "medically_verified"
+          "medically_verified",
+          "benign",
+          "stent_required",
+          "procedural_trauma"
         ]
       },
       "vascular": {
@@ -490,6 +551,15 @@
           "carotid",
           "unruptured",
           "inoperable",
+          "medically_verified"
+        ]
+      },
+      "dental": {
+        "subcategories": [
+          "gum_issue"
+        ],
+        "attributes": [
+          "chronic",
           "medically_verified"
         ]
       }
@@ -520,7 +590,8 @@
       },
       "personal_items": {
         "subcategories": [
-          "musical_instrument"
+          "musical_instrument",
+          "lost_belongings"
         ],
         "attributes": [
           "custom",
@@ -616,7 +687,8 @@
           "heat_or_electricity",
           "spontaneous_vocalization",
           "kundalini",
-          "temperature_change"
+          "temperature_change",
+          "emotional_catharsis"
         ],
         "attributes": [
           "during_meditation",
@@ -635,14 +707,17 @@
           "new_self_embodied",
           "purpose_clarity",
           "boundary_setting",
-          "relationship_pattern_broken"
+          "relationship_pattern_broken",
+          "inner_guidance_followed",
+          "surrender_moment"
         ],
         "attributes": [
           "lifelong_pattern_broken",
           "immediate",
-          "gradual",
           "post_trauma",
-          "first_time_in_life"
+          "first_time_in_life",
+          "against_medical_advice",
+          "preceded_by_inner_voice"
         ]
       },
       "mystical_experience": {
@@ -700,18 +775,21 @@
           "referring_others",
           "public_testimony",
           "content_creation",
-          "practitioner_certification"
+          "practitioner_certification",
+          "professional_practice_integration"
         ],
         "attributes": [
           "to_family",
           "to_medical_professionals",
-          "to_community"
+          "to_community",
+          "to_students",
+          "to_patients"
         ]
       }
     },
     "other": {
       "other": {
-        "subcategories":[
+        "subcategories": [
           "pet_healing",
           "hybrid_story"
         ],
@@ -721,14 +799,10 @@
   },
   "updatedAt": "2026-04-02T00:00:00.0000000+00:00",
   "changes": [
-    "Added contribution and vastly overhauled manifestation and transformation types.",
-    "neurological: merged cognitive_fog into brain_fog; brain_fog promoted to subcategory (27 corpus hits)",
-    "neurological: removed cognitive_fog attribute (merged into brain_fog subcategory)",
-    "neurological: removed brain_fog attribute (now subcategory)",
-    "musculoskeletal: removed hip_joints attribute (too specific, not a descriptor)",
-    "musculoskeletal: removed night_pain attribute (too specific, not reusable)",
-    "musculoskeletal: removed yoga_induced attribute (too specific, not reusable)",
-    "reproductive: removed chest_extension attribute (unclear meaning, zero analytical value)",
-    "synchronicity: fixed attribute syntax to flat array with timing/context only — removed subcategory-scoped nesting"
+    "transformation.somatic_breakthrough.subcategories: emotional_catharsis toegevoegd",
+    "transformation.identity_shift.subcategories: inner_guidance_followed, surrender_moment toegevoegd",
+    "transformation.identity_shift.attributes: gradual verwijderd · against_medical_advice, preceded_by_inner_voice toegevoegd",
+    "contribution.teaching_or_sharing.subcategories: professional_practice_integration toegevoegd",
+    "contribution.teaching_or_sharing.attributes: to_students, to_patients toegevoegd"
   ]
 }
