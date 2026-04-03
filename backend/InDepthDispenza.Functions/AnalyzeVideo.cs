@@ -37,36 +37,42 @@ public class AnalyzeVideo
             return new BadRequestObjectResult("Missing required parameter: videoId");
         }
 
-        // Delegate to business logic layer (TranscriptAnalyzer handles everything)
-        var result = await _transcriptAnalyzer.AnalyzeTranscriptAsync(videoId);
-
-        // HTTP concern: Map business result to HTTP response
-        if (!result.IsSuccess)
+        using (_logger.BeginScope(new Dictionary<string, object>
         {
-            _logger.LogError("Failed to analyze video: {Error}", result.ErrorMessage);
-            return new ObjectResult(new { error = result.ErrorMessage })
+            ["VideoId"] = videoId
+        }))
+        {
+            // Delegate to business logic layer (TranscriptAnalyzer handles everything)
+            var result = await _transcriptAnalyzer.AnalyzeTranscriptAsync(videoId);
+
+            // HTTP concern: Map business result to HTTP response
+            if (!result.IsSuccess)
             {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+                _logger.LogError("Failed to analyze video: {Error}", result.ErrorMessage);
+                return new ObjectResult(new { error = result.ErrorMessage })
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+
+            var analysis = result.Data!;
+
+            // Business orchestration (taxonomy update, persistence) is handled inside TranscriptAnalyzer
+            // The Function only maps the result to HTTP response.
+            return new OkObjectResult(new
+            {
+                videoId = analysis.Id,
+                analyzedAt = analysis.AnalyzedAt,
+                modelVersion = analysis.ModelVersion,
+                achievements = analysis.Achievements,
+                timeframe = analysis.Timeframe,
+                practices = analysis.Practices,
+                sentimentScore = analysis.SentimentScore,
+                confidenceScore = analysis.ConfidenceScore,
+                proposals = analysis.Proposals,
+                message = "Video analysis complete."
+            });
         }
-
-        var analysis = result.Data!;
-
-        // Business orchestration (taxonomy update, persistence) is handled inside TranscriptAnalyzer
-        // The Function only maps the result to HTTP response.
-        return new OkObjectResult(new
-        {
-            videoId = analysis.Id,
-            analyzedAt = analysis.AnalyzedAt,
-            modelVersion = analysis.ModelVersion,
-            achievements = analysis.Achievements,
-            timeframe = analysis.Timeframe,
-            practices = analysis.Practices,
-            sentimentScore = analysis.SentimentScore,
-            confidenceScore = analysis.ConfidenceScore,
-            proposals = analysis.Proposals,
-            message = "Video analysis complete."
-        });
     }
 
     // Queue-triggered variant: invoked when ScanPlaylist enqueues a new video
@@ -81,14 +87,21 @@ public class AnalyzeVideo
         {
             throw new InvalidOperationException("Queue message could not be deserialized into VideoInfo or missing VideoId");
         }
-        
-        var result = await _transcriptAnalyzer.AnalyzeTranscriptAsync(video.VideoId, video.VersionLabel);
-        if (!result.IsSuccess)
-        {
-            _logger.LogError("Queue-based analysis failed for {VideoId}: {Error}", video.VideoId, result.ErrorMessage);
-            throw new InvalidOperationException($"Analysis failed for {video.VideoId}: {result.ErrorMessage}", result.Exception);
-        }
 
-        _logger.LogInformation("Queue-based analysis succeeded for VideoId {VideoId} (versionLabel: {VersionLabel})", video.VideoId, video.VersionLabel ?? "none");
+        using (_logger.BeginScope(new Dictionary<string, object>
+        {
+            ["VideoId"] = video.VideoId,
+            ["VersionLabel"] = video.VersionLabel ?? "none"
+        }))
+        {
+            var result = await _transcriptAnalyzer.AnalyzeTranscriptAsync(video.VideoId, video.VersionLabel);
+            if (!result.IsSuccess)
+            {
+                _logger.LogError("Queue-based analysis failed for {VideoId}: {Error}", video.VideoId, result.ErrorMessage);
+                throw new InvalidOperationException($"Analysis failed for {video.VideoId}: {result.ErrorMessage}", result.Exception);
+            }
+
+            _logger.LogInformation("Queue-based analysis succeeded for VideoId {VideoId} (versionLabel: {VersionLabel})", video.VideoId, video.VersionLabel ?? "none");
+        }
     }
 }
