@@ -1,5 +1,12 @@
 {
     "version": "2.0",
+    "extensions": {
+        "queues": {
+            "batchSize": 4,
+            "maxDequeueCount": 1,
+            "visibilityTimeout": "00:01:00"
+        }
+    },
     "logging": {
         "applicationInsights": {
             "samplingSettings": {
