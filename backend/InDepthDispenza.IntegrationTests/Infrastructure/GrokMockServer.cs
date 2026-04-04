@@ -8,9 +8,14 @@ namespace InDepthDispenza.IntegrationTests.Infrastructure;
 /// </summary>
 public class GrokMockServer(WireMockConfiguration wireMock)
 {
+    private static readonly object[] DefaultAchievements = new object[]
+    {
+        new { type = "healing", tags = new[] { "default_tag" }, details = "Default test achievement" }
+    };
+
     /// <summary>
     /// Registers a Grok chat completions response. Optionally provide achievements to include in the JSON content.
-    /// If <paramref name="achievements"/> is null, an empty achievements array is returned.
+    /// If <paramref name="achievements"/> is null, a default achievement is returned to satisfy validation.
     /// </summary>
     public async Task SetupAsync(object[]? achievements = null)
     {
@@ -32,7 +37,7 @@ public class GrokMockServer(WireMockConfiguration wireMock)
                         {
                             analysis = new
                             {
-                                achievements = achievements ?? Array.Empty<object>(),
+                                achievements = achievements ?? DefaultAchievements,
                                 timeframe = (object?)null,
                                 practices = Array.Empty<string>(),
                                 sentimentScore = 0.5,

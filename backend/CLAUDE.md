@@ -91,3 +91,12 @@ Integration tests use Testcontainers to run true black-box tests with:
 - Cosmos DB emulator for persistence
 
 See `InDepthDispenza.IntegrationTests/docs/integration-testing-architecture.md` for details.
+
+## Pre-Commit Checklist
+
+Before committing changes, always run:
+
+1. **Unit tests**: `dotnet test IndepthDispenza.Tests/IndepthDispenza.Tests.csproj`
+2. **Integration tests**: `dotnet test InDepthDispenza.IntegrationTests/InDepthDispenza.IntegrationTests.csproj`
+
+Integration tests are critical - they test the full pipeline including WireMock stubs for external APIs. Changes to domain logic (especially validation, error handling, or response parsing) often break integration tests even when unit tests pass.
