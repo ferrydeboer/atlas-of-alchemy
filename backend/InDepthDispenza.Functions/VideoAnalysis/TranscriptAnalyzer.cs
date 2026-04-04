@@ -130,11 +130,13 @@ public class TranscriptAnalyzer : ITranscriptAnalyzer
 
     /// <summary>
     /// Maps the typed LLM response into the domain VideoAnalysis.
+    /// Throws LlmResponseException if deserialization fails or response has no meaningful content.
     /// </summary>
     private (VideoAnalysis Analysis, LlmResponse Dto) ParseLlmResponse(string videoId, CommonLlmResponse common, PromptExecutionInfoDto promptInfo)
     {
         // Convert common assistant payload into domain DTO
-        LlmVideoAnalysisResponseDto dto;
+        LlmVideoAnalysisResponseDto? dto;
+        string rawJson;
         var opts = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -144,13 +146,33 @@ public class TranscriptAnalyzer : ITranscriptAnalyzer
         if (string.Equals(common.Assistant.ContentType, "application/json", StringComparison.OrdinalIgnoreCase)
             && common.Assistant.JsonContent is JsonElement json)
         {
-            dto = JsonSerializer.Deserialize<LlmVideoAnalysisResponseDto>(json.GetRawText(), opts)
-                  ?? new LlmVideoAnalysisResponseDto(new AnalysisDto(null, null, null, null, null), new ProposalsDto(null));
+            rawJson = json.GetRawText();
+            dto = JsonSerializer.Deserialize<LlmVideoAnalysisResponseDto>(rawJson, opts);
         }
         else
         {
-            dto = JsonSerializer.Deserialize<LlmVideoAnalysisResponseDto>(common.Assistant.RawContent, opts)
-                  ?? new LlmVideoAnalysisResponseDto(new AnalysisDto(null, null, null, null, null), new ProposalsDto(null));
+            rawJson = common.Assistant.RawContent;
+            dto = JsonSerializer.Deserialize<LlmVideoAnalysisResponseDto>(rawJson, opts);
+        }
+
+        // Validate deserialization succeeded
+        if (dto is null)
+        {
+            var truncated = rawJson.Length > 500 ? rawJson[..500] + "..." : rawJson;
+            throw new LlmResponseException(
+                videoId,
+                $"LLM response for {videoId} deserialized to null. Schema mismatch suspected.",
+                truncated);
+        }
+
+        // Validate response has meaningful content
+        if (!dto.HasMeaningfulContent())
+        {
+            var truncated = rawJson.Length > 500 ? rawJson[..500] + "..." : rawJson;
+            throw new LlmResponseException(
+                videoId,
+                $"LLM response for {videoId} contains no meaningful analysis (empty achievements, timeframe, and practices).",
+                truncated);
         }
 
         var analysis = dto.Analysis;

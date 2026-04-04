@@ -101,3 +101,18 @@ public record Timeframe(
     string? NoticeEffects,
     string? FullHealing
 );
+
+public static class LlmVideoAnalysisResponseDtoExtensions
+{
+    /// <summary>
+    /// Validates that the LLM response contains meaningful analysis data.
+    /// Returns false if the response has no achievements.
+    /// </summary>
+    public static bool HasMeaningfulContent(this LlmVideoAnalysisResponseDto dto)
+    {
+        if (dto.Analysis is null)
+            return false;
+
+        return dto.Analysis.Achievements is { Length: > 0 };
+    }
+}
