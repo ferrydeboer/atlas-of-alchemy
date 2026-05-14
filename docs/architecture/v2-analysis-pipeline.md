@@ -77,7 +77,7 @@ Steps 1–4 are the transactional unit. Step 5 is best-effort.
 | Property | Value |
 |---|---|
 | Partition key | `corpusId` |
-| Document ID | `{corpusId}_{videoId}_{segmentType}` |
+| Document ID | `{corpusId}_{sourceId}_{segmentType}` |
 
 Partition key `corpusId` optimises for the primary query pattern: listing and filtering videos within a
 single corpus. Cross-corpus queries are rare bulk operations, not latency-sensitive user queries.
@@ -88,7 +88,7 @@ single corpus. Cross-corpus queries are rare bulk operations, not latency-sensit
 {
   "id": "dispenza_dQw4w9WgXcQ_achievements",
   "corpusId": "dispenza",
-  "videoId": "dQw4w9WgXcQ",
+  "sourceId": "dQw4w9WgXcQ",
   "segmentType": "achievements",
   "analyzedAt": "2026-05-14T10:00:00Z",
   "promptVersion": "v3+taxonomy-v9",
@@ -98,7 +98,7 @@ single corpus. Cross-corpus queries are rare bulk operations, not latency-sensit
 }
 ```
 
-One document per `(corpusId, videoId, segmentType)`. Latest run wins — upsert overwrites. No version
+One document per `(corpusId, sourceId, segmentType)`. Latest run wins — upsert overwrites. No version
 history in Cosmos. LLM execution metadata (tokens, duration, model) goes to Application Insights via
 the telemetry decorator, not into this document.
 
@@ -114,7 +114,7 @@ public interface ISegmentRunner
 }
 
 // Stable input — same for all segments
-public record SegmentInput(string CorpusId, string VideoId, string Transcript);
+public record SegmentInput(string CorpusId, string SourceId, string Transcript);
 
 // Abstract base — what each segment extends
 public abstract class SegmentAnalyzer<TOutput> : ISegmentRunner
@@ -131,7 +131,7 @@ public record BuiltPrompt(string Content, string PromptVersion);
 // Base output — extended per segment
 public abstract record SegmentOutput(
     string CorpusId,
-    string VideoId,
+    string SourceId,
     DateTimeOffset AnalyzedAt,
     string PromptVersion
 );
@@ -177,7 +177,7 @@ wrapping `ILlmService`. It emits a structured AppInsights event per LLM call:
 
 ```
 Event: LlmCall
-Properties: corpusId, videoId, segmentType, model, provider
+Properties: corpusId, sourceId, segmentType, model, provider
 Metrics: tokensPrompt, tokensCompletion, tokensTotal, durationMs
 ```
 
@@ -189,11 +189,11 @@ The decorator is registered in DI as the outermost wrapper. No segment or engine
 
 ```csharp
 // Typed point read — derives segmentType from TOutput
-Task<TOutput?> GetSegmentAsync<TOutput>(string corpusId, string videoId, CancellationToken ct)
+Task<TOutput?> GetSegmentAsync<TOutput>(string corpusId, string sourceId, CancellationToken ct)
     where TOutput : SegmentOutput;
 
 // All segments for a video — single partition query
-Task<IReadOnlyList<SegmentOutput>> GetAllSegmentsAsync(string corpusId, string videoId, CancellationToken ct);
+Task<IReadOnlyList<SegmentOutput>> GetAllSegmentsAsync(string corpusId, string sourceId, CancellationToken ct);
 ```
 
 Search queries are segment-scoped — filter on properties of a specific segment type within a corpus partition.

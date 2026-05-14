@@ -63,12 +63,12 @@ was composed. Version composition is entirely the segment's responsibility.
 
 ### Storage Model
 
-One document per `(corpusId, videoId, segmentType)`:
+One document per `(corpusId, sourceId, segmentType)`:
 
 | Field | Value |
 |---|---|
 | Partition key | `corpusId` |
-| Document ID | `{corpusId}_{videoId}_{segmentType}` |
+| Document ID | `{corpusId}_{sourceId}_{segmentType}` |
 | `segmentType` | Derived from `TOutput` type name |
 | `promptVersion` | Composed by the segment, stored on the document |
 | `analyzedAt` | Timestamp of the analysis run |
@@ -81,7 +81,7 @@ without creating duplicates.
 
 Model name, token counts, duration, and request ID are infrastructure concerns, not domain data. They are
 captured by a `TelemetryLlmService` decorator wrapping `ILlmService`. The decorator emits structured events
-to Application Insights including `corpusId`, `videoId`, and `segmentType` for correlation. No segment or
+to Application Insights including `corpusId`, `sourceId`, and `segmentType` for correlation. No segment or
 engine code handles telemetry.
 
 An optional `LoggingLlmService` decorator can capture raw LLM responses to blob storage for debugging — off
