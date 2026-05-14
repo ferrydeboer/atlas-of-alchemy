@@ -1,0 +1,12 @@
+{
+  "issue": 13,
+  "runFolder": "runs/13",
+  "issueContent": {
+    "title": "Improve error handling",
+    "body": "The error handling in the application could be better.",
+    "author": "external-contributor"
+  },
+  "conversationContext": {
+    "turnCount": 0
+  }
+}

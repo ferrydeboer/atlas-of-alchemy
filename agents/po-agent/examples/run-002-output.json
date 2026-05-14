@@ -1,0 +1,10 @@
+{
+  "status": "needs_clarification",
+  "issue": 13,
+  "questions": [
+    "Which specific errors are you encountering that aren't handled well?",
+    "Is this about a specific module (e.g., YouTube integration, transcript fetching, LLM analysis) or the entire application?"
+  ],
+  "turnCount": 1,
+  "context": "The issue mentions 'error handling' generically without specifying which errors, which modules, or what the current problematic behavior is."
+}

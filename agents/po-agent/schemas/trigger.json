@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "POAgentTrigger",
+  "description": "Minimal input to trigger the PO Agent. The agent fetches issue content and writes full input.json to run folder.",
+  "type": "object",
+  "properties": {
+    "issue": {
+      "type": "integer",
+      "description": "Issue number to process"
+    }
+  },
+  "required": ["issue"],
+  "examples": [
+    { "issue": 13 }
+  ]
+}

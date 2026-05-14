@@ -1,0 +1,19 @@
+{
+  "issue": 12,
+  "runFolder": "runs/12",
+  "issueContent": {
+    "title": "Add retry logic when transcript API returns 429",
+    "body": "Currently when the YouTube transcript API returns a 429 rate limit error, the request fails immediately. We should retry with backoff instead.",
+    "author": "ferrydeboer"
+  },
+  "conversationContext": {
+    "turnCount": 1,
+    "previousQuestions": [
+      "Should the retry count be configurable, or is a fixed count acceptable?"
+    ],
+    "userResponses": [
+      "Fixed at 3 is fine for now."
+    ],
+    "decisions": []
+  }
+}

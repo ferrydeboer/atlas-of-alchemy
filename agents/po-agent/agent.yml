@@ -1,0 +1,56 @@
+version: "1.0.0"
+# Bump on any prompt or config change. Recorded in run logs for audit.
+
+model:
+  primary: "claude-haiku-4-5"
+  fallback: "claude-haiku-4-5"
+  # Reasoning: PO role is structuring, classification, and requirements refinement.
+  # Does not require deep code reasoning — that's the Architect's job.
+
+sampling:
+  temperature: 0.2
+  # Low temperature for deterministic structured output.
+  # PO output must be consistent across similar requests.
+
+tokenBudget:
+  maxInputTokens: 8000
+  maxOutputTokens: 2000
+  hardStopOnExceed: true
+  warnAt: 0.8
+  # Higher input budget than original design to accommodate:
+  # - Issue content
+  # - Project context from docs/README.md
+  # - Conversation history in multi-turn scenarios
+
+retry:
+  maxAttempts: 3
+  backoffSeconds: [2, 5, 15]
+  retryOn: ["rate_limit", "timeout"]
+  failFast: false
+
+timeout:
+  seconds: 60
+  onTimeout: "fail_and_alert"
+
+humanGate:
+  position: "none"
+  # PO output feeds directly to Architect.
+  # Gate 1 sits at DesignDoc approval, not WorkItem approval.
+
+capabilities:
+  readGitHub: true
+  writeGitHub: true
+  readCosmos: false
+  writeCosmos: false
+  callOpenHands: false
+  webSearch: false
+  # PO agent reads issues for initial requirements,
+  # writes back enriched requirements and decision log comments.
+
+contract:
+  trigger: "schemas/trigger.json"
+  input: "schemas/input.json"
+  output: "schemas/output.json"
+  # trigger = minimal human input (issue number)
+  # input = full recorded input (written by agent for traceability)
+  # output = WorkItem, NeedsClarification, or Rejected

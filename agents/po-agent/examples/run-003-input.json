@@ -1,0 +1,12 @@
+{
+  "issue": 14,
+  "runFolder": "runs/14",
+  "issueContent": {
+    "title": "Add caching, improve performance, and fix duplicate bug",
+    "body": "We need to add caching for transcript lookups, improve the overall performance of the analysis pipeline, and fix the bug where some videos get analyzed twice.",
+    "author": "ferrydeboer"
+  },
+  "conversationContext": {
+    "turnCount": 0
+  }
+}

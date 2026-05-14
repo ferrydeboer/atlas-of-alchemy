@@ -1,0 +1,6 @@
+{
+  "status": "rejected",
+  "issue": 14,
+  "reason": "Request contains multiple independent concerns that should not be combined: (1) caching for transcript lookups (feature), (2) performance improvements for analysis pipeline (optimization), (3) duplicate analysis bug (bug fix). Each has different scope, testing requirements, and risk profiles.",
+  "suggestion": "Split into three separate issues:\n1. 'Add transcript caching to reduce API calls' — Feature focusing on caching layer\n2. 'Improve analysis pipeline performance' — Optimization after profiling identifies bottlenecks\n3. 'Fix duplicate video analysis' — Bug fix with reproduction steps and targeted fix"
+}

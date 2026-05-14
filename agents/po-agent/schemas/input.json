@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "POAgentInput",
+  "description": "Full input recorded by the PO Agent for traceability. Written to the run folder after fetching issue content.",
+  "type": "object",
+  "properties": {
+    "issue": {
+      "type": "integer",
+      "description": "Issue number being processed"
+    },
+    "runFolder": {
+      "type": "string",
+      "description": "Path to the run folder (e.g., 'runs/13' or 'runs/13.2')"
+    },
+    "issueContent": {
+      "type": "object",
+      "description": "Content fetched from issue tracker",
+      "properties": {
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "author": { "type": "string" },
+        "state": { "type": "string" },
+        "labels": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["title", "body", "author"]
+    },
+    "conversationContext": {
+      "type": "object",
+      "description": "Context from previous turns in multi-turn conversation",
+      "properties": {
+        "turnCount": {
+          "type": "integer",
+          "description": "Current turn number (0 = initial read)",
+          "default": 0
+        },
+        "previousQuestions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Questions asked in previous turns"
+        },
+        "userResponses": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "User responses to previous questions"
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "decision": { "type": "string" },
+              "rationale": { "type": "string" }
+            },
+            "required": ["decision", "rationale"]
+          },
+          "description": "Decisions made so far with rationale"
+        }
+      }
+    }
+  },
+  "required": ["issue", "runFolder", "issueContent"]
+}

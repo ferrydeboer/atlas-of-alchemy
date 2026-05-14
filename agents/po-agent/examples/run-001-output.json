@@ -1,0 +1,51 @@
+{
+  "status": "work_item",
+  "issue": 12,
+  "title": "Add retry with backoff for transcript API rate limits",
+  "changeRequest": "When YouTubeTranscriptIo returns HTTP 429, retry the request with exponential backoff instead of immediately failing.",
+  "acceptanceCriteria": [
+    {
+      "id": "retry-on-429",
+      "criterion": "Requests returning HTTP 429 are retried up to 3 times",
+      "status": "pending"
+    },
+    {
+      "id": "exponential-backoff",
+      "criterion": "Backoff delays follow exponential pattern: 1s, 2s, 4s",
+      "status": "pending"
+    },
+    {
+      "id": "propagate-after-exhaustion",
+      "criterion": "After 3 failed retries, the original 429 error propagates to caller",
+      "status": "pending"
+    },
+    {
+      "id": "log-retry-attempts",
+      "criterion": "Each retry attempt is logged at Warning level with attempt count",
+      "status": "pending"
+    }
+  ],
+  "scopeBoundary": "Changes limited to YouTubeTranscriptIo integration module",
+  "affectedAreas": [
+    "Integrations/YouTubeTranscriptIo"
+  ],
+  "outOfScope": [
+    "Retry logic for other integration modules",
+    "Circuit breaker pattern",
+    "Configurable retry counts"
+  ],
+  "decisionLog": [
+    {
+      "decision": "Fixed retry count of 3",
+      "rationale": "User confirmed configurability not needed at this stage"
+    },
+    {
+      "decision": "Exponential backoff (1s, 2s, 4s)",
+      "rationale": "Standard pattern for rate limit handling, avoids thundering herd"
+    },
+    {
+      "decision": "Warning-level logging for retries",
+      "rationale": "Info too noisy for normal operation, Error reserved for actual failures"
+    }
+  ]
+}
