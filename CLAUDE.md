@@ -2,6 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
+## Skills
+Skills are located in /agent/*/SKILL.md — load them as needed.
+
 ## Development Workflow
 
 This project follows **Trunk Based Development** - commit directly to `main`.
