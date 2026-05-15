@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "agents/schemas/work-item.json",
+  "title": "WorkItem",
+  "description": "Canonical WorkItem schema. Source of truth for the PO Agent output and Architect Agent input. Any change here propagates to both.",
+  "type": "object",
+  "properties": {
+    "status": { "const": "work_item" },
+    "issue": {
+      "type": "integer",
+      "description": "GitHub issue number this WorkItem was derived from"
+    },
+    "title": {
+      "type": "string",
+      "description": "Concise title for the change"
+    },
+    "changeRequest": {
+      "type": "string",
+      "description": "Clear description of what should change and why"
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "description": "Testable criteria that define done. Max 5 — more means the scope is too large.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$",
+            "description": "Human-readable slug for traceability, e.g., 'retry-on-429'"
+          },
+          "criterion": {
+            "type": "string",
+            "description": "What must be true for this criterion to be met"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "met", "failed"],
+            "default": "pending",
+            "description": "Set to 'pending' by PO Agent. Updated to 'met' or 'failed' by Developer Agent."
+          },
+          "evidence": {
+            "type": ["string", "null"],
+            "description": "Test name proving the criterion is met. Set by Developer Agent, null until then."
+          }
+        },
+        "required": ["id", "criterion", "status"]
+      },
+      "minItems": 1,
+      "maxItems": 5
+    },
+    "scopeBoundary": {
+      "type": "string",
+      "description": "Explicit statement of what is in scope. Developer Agent enforces this during implementation."
+    },
+    "affectedAreas": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Codebase paths likely to be affected"
+    },
+    "outOfScope": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicitly excluded items to prevent scope creep"
+    },
+    "decisionLog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision": { "type": "string" },
+          "rationale": { "type": "string" }
+        },
+        "required": ["decision", "rationale"]
+      },
+      "description": "Key decisions made during PO refinement with rationale",
+      "minItems": 1
+    }
+  },
+  "required": ["status", "issue", "title", "changeRequest", "acceptanceCriteria", "scopeBoundary", "affectedAreas", "outOfScope", "decisionLog"]
+}

@@ -288,7 +288,7 @@ Acceptance criteria use slug IDs for traceability — the Developer agent refere
   "commitPlan": [
     {
       "order": 1,
-      "type": "preparatory_refactor | feature",
+      "type": "preparatory_refactor | implementation",
       "description": "string",
       "filesChanged": [
         { "path": "string", "change": "string" }

@@ -1,107 +1,23 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "POAgentOutput",
-  "description": "Output schema for the PO Agent. One of three states: work_item, needs_clarification, or rejected.",
+  "description": "Output schema for the PO Agent. On success, produces a WorkItem. On failure, produces NeedsClarification or Rejected.",
   "oneOf": [
-    {
-      "type": "object",
-      "title": "WorkItem",
-      "description": "Successfully refined requirements ready for Architect agent",
-      "properties": {
-        "status": { "const": "work_item" },
-        "issue": {
-          "type": "integer",
-          "description": "Issue number this WorkItem was derived from"
-        },
-        "title": {
-          "type": "string",
-          "description": "Concise title for the change"
-        },
-        "changeRequest": {
-          "type": "string",
-          "description": "Clear description of what should change and why"
-        },
-        "acceptanceCriteria": {
-          "type": "array",
-          "description": "Testable criteria that define done",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "pattern": "^[a-z0-9-]+$",
-                "description": "Human-readable slug for traceability, e.g., 'retry-on-429'"
-              },
-              "criterion": {
-                "type": "string",
-                "description": "What must be true for this criterion to be met"
-              },
-              "status": {
-                "type": "string",
-                "enum": ["pending", "met", "failed"],
-                "default": "pending",
-                "description": "Current status (updated by Developer agent)"
-              },
-              "evidence": {
-                "type": "string",
-                "description": "Test name or commit reference proving status (set by Developer agent)"
-              }
-            },
-            "required": ["id", "criterion", "status"]
-          },
-          "minItems": 1,
-          "maxItems": 5
-        },
-        "scopeBoundary": {
-          "type": "string",
-          "description": "Explicit statement of what is in scope"
-        },
-        "affectedAreas": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Parts of the codebase likely to be affected"
-        },
-        "outOfScope": {
-          "type": "array",
-          "items": { "type": "string" },
-          "description": "Explicitly excluded items to prevent scope creep"
-        },
-        "decisionLog": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "decision": { "type": "string" },
-              "rationale": { "type": "string" }
-            },
-            "required": ["decision", "rationale"]
-          },
-          "description": "Key decisions made during refinement with rationale"
-        }
-      },
-      "required": ["status", "issue", "title", "changeRequest", "acceptanceCriteria", "scopeBoundary", "decisionLog"]
-    },
+    { "$ref": "../../schemas/work-item.json" },
     {
       "type": "object",
       "title": "NeedsClarification",
-      "description": "Insufficient information to produce WorkItem, questions needed",
+      "description": "Insufficient information to produce a WorkItem. Questions required from the requester.",
       "properties": {
         "status": { "const": "needs_clarification" },
-        "issue": {
-          "type": "integer",
-          "description": "Issue number being processed"
-        },
+        "issue": { "type": "integer" },
         "questions": {
           "type": "array",
           "items": { "type": "string" },
-          "description": "Questions to ask the requester",
           "minItems": 1,
           "maxItems": 3
         },
-        "turnCount": {
-          "type": "integer",
-          "description": "Current turn number"
-        },
+        "turnCount": { "type": "integer" },
         "context": {
           "type": "string",
           "description": "Brief explanation of why clarification is needed"
@@ -112,23 +28,14 @@
     {
       "type": "object",
       "title": "Rejected",
-      "description": "Request cannot be processed as a single WorkItem",
+      "description": "Request cannot be processed as a single WorkItem — mixed concerns or unresolvable ambiguity.",
       "properties": {
         "status": { "const": "rejected" },
-        "issue": {
-          "type": "integer",
-          "description": "Issue number being rejected"
-        },
-        "reason": {
-          "type": "string",
-          "description": "Why the request was rejected"
-        },
-        "suggestion": {
-          "type": "string",
-          "description": "How the requester could split or reformulate the request"
-        }
+        "issue": { "type": "integer" },
+        "reason": { "type": "string" },
+        "suggestion": { "type": "string" }
       },
-      "required": ["status", "issue", "reason"]
+      "required": ["status", "issue", "reason", "suggestion"]
     }
   ]
 }

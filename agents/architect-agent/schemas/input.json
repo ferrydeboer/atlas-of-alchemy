@@ -6,54 +6,13 @@
   "properties": {
     "issue": {
       "type": "integer",
-      "description": "Issue number being processed"
+      "description": "GitHub issue number being processed"
     },
     "runFolder": {
       "type": "string",
-      "description": "Path to the run folder (e.g., 'runs/13' or 'runs/13.2')"
+      "description": "Path to the run folder, e.g., 'runs/13' or 'runs/13.2'"
     },
-    "workItem": {
-      "type": "object",
-      "description": "Full WorkItem as produced by the PO Agent",
-      "properties": {
-        "status": { "const": "work_item" },
-        "issue": { "type": "integer" },
-        "title": { "type": "string" },
-        "changeRequest": { "type": "string" },
-        "acceptanceCriteria": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "criterion": { "type": "string" },
-              "status": { "type": "string" }
-            },
-            "required": ["id", "criterion", "status"]
-          }
-        },
-        "scopeBoundary": { "type": "string" },
-        "affectedAreas": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "outOfScope": {
-          "type": "array",
-          "items": { "type": "string" }
-        },
-        "decisionLog": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "decision": { "type": "string" },
-              "rationale": { "type": "string" }
-            }
-          }
-        }
-      },
-      "required": ["status", "issue", "title", "changeRequest", "acceptanceCriteria", "scopeBoundary"]
-    }
+    "workItem": { "$ref": "../../schemas/work-item.json" }
   },
   "required": ["issue", "runFolder", "workItem"]
 }

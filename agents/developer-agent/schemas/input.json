@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DeveloperAgentInput",
+  "description": "Full input recorded by the Developer Agent for traceability. Written to the run folder after loading the DesignDoc and WorkItem.",
+  "type": "object",
+  "properties": {
+    "issue": {
+      "type": "integer",
+      "description": "GitHub issue number being implemented"
+    },
+    "runFolder": {
+      "type": "string",
+      "description": "Path to the run folder, e.g., 'runs/13' or 'runs/13.2'"
+    },
+    "designDoc": { "$ref": "../../schemas/design-doc.json" },
+    "workItem": { "$ref": "../../schemas/work-item.json" }
+  },
+  "required": ["issue", "runFolder", "designDoc", "workItem"]
+}

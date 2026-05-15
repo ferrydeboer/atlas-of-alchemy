@@ -1,0 +1,65 @@
+version: "1.0.0"
+# Bump on any prompt or config change. Recorded in run logs for audit.
+
+model:
+  primary: "claude-sonnet-4-6"
+  fallback: "claude-sonnet-4-6"
+  # Reasoning: Developer role requires deep code reasoning to implement multi-file
+  # changes correctly, understand test conventions, diagnose compiler errors, and
+  # write well-structured C# that fits existing patterns. Haiku is insufficient for
+  # this level of code synthesis. Revisit upgrading to Opus if fix loops frequently
+  # exhaust retries on complex steps.
+
+sampling:
+  temperature: 0.2
+  # Low temperature for deterministic, pattern-consistent code generation.
+  # Implementation must be reproducible and auditable across runs.
+
+tokenBudget:
+  maxInputTokens: 60000
+  maxOutputTokens: 8000
+  hardStopOnExceed: true
+  warnAt: 0.8
+  # Large input budget: Developer reads source files, test files, DesignDoc,
+  # WorkItem, compiler error output, and test output across multiple loop iterations.
+  # Output budget covers full implementation including test code per commit step.
+
+retry:
+  maxAttempts: 3
+  backoffSeconds: [2, 5, 15]
+  retryOn: ["rate_limit", "timeout"]
+  failFast: false
+
+timeout:
+  seconds: 600
+  onTimeout: "fail_and_alert"
+  # Long timeout: each step involves implement → format → build → test → commit.
+  # Multi-step DesignDocs multiply this wall-clock time significantly.
+
+humanGate:
+  position: "none"
+  # Developer commits directly to main when all tests pass.
+  # Gate 1 (DesignDoc approval) already occurred before this agent runs.
+  # Gate 2 is deployment timing — controlled externally, not by this agent.
+
+capabilities:
+  readGitHub: true
+  writeGitHub: false    # no PR creation — commits go directly to main
+  readCosmos: false
+  writeCosmos: false
+  callOpenHands: false
+  webSearch: false
+  runBuild: true        # dotnet build for compilation verification
+  runTests: true        # dotnet test for step and regression verification
+  runFormat: true       # dotnet format before each commit
+  gitRead: true         # git status, git diff, git log for state inspection
+  gitCommit: true       # commits directly to main (trunk-based development)
+  gitStash: true        # stash checkpoint before each step, pop/drop after
+  gitBranch: true       # create blocked branch on escalation
+  writeFiles: true      # write implementation files and developer-output.json
+  readInfrastructure: true   # may read infrastructure/ files for context
+  writeInfrastructure: false # NEVER write, edit, or delete infrastructure/ files
+
+contract:
+  input: "schemas/input.json"
+  output: "schemas/output.json"

@@ -190,7 +190,7 @@ description of what is ambiguous and why.
   "commitPlan": [
     {
       "order": 1,
-      "type": "preparatory_refactor | feature",
+      "type": "preparatory_refactor | implementation",
       "description": "extract TranscriptFetcher from TranscriptAnalyzer",
       "filesChanged": [
         {

@@ -1,0 +1,142 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "agents/schemas/design-doc.json",
+  "title": "DesignDoc",
+  "description": "Canonical DesignDoc schema. Source of truth for the Architect Agent output and Developer Agent input. Any change here propagates to both.",
+  "type": "object",
+  "properties": {
+    "status": { "const": "design_doc" },
+    "issue": {
+      "type": "integer",
+      "description": "GitHub issue number this DesignDoc was derived from"
+    },
+    "workItemTitle": {
+      "type": "string",
+      "description": "Title from the WorkItem for traceability"
+    },
+    "approach": {
+      "type": "string",
+      "description": "One paragraph describing the implementation strategy and why it fits existing patterns"
+    },
+    "filesRead": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Every file examined during Architect analysis, including compiler-probe-surfaced files. Makes analysis scope auditable at Gate 1.",
+      "minItems": 1
+    },
+    "commitPlan": {
+      "type": "array",
+      "description": "Ordered sequence of commits. Each must compile and pass all existing tests when applied in isolation.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "integer",
+            "description": "Execution order — Developer applies these sequentially, never reordered"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["preparatory_refactor", "implementation"],
+            "description": "preparatory_refactor: behavior-preserving change enabling later commits. implementation: new behavior plus its tests in one atomic commit."
+          },
+          "description": {
+            "type": "string",
+            "description": "What this commit achieves. Developer derives the commit message from this."
+          },
+          "filesChanged": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string" },
+                "change": {
+                  "type": "string",
+                  "description": "What specifically changes in this file"
+                }
+              },
+              "required": ["path", "change"]
+            },
+            "minItems": 1
+          },
+          "testRequired": {
+            "type": "object",
+            "description": "Required when the commit introduces or changes behavior. Omit for purely structural commits with no behavior change.",
+            "properties": {
+              "class": {
+                "type": "string",
+                "description": "Test class name, e.g., 'TranscriptAnalyzerTests'"
+              },
+              "method": {
+                "type": "string",
+                "description": "Test method name, e.g., 'AnalyzeAsync_MissingVideoId_ThrowsArgumentException'"
+              },
+              "assertionIntent": {
+                "type": "string",
+                "description": "What this test proves about behavior"
+              }
+            },
+            "required": ["class", "method", "assertionIntent"]
+          }
+        },
+        "required": ["order", "type", "description", "filesChanged"]
+      },
+      "minItems": 1
+    },
+    "refactoringsInScope": {
+      "type": "array",
+      "description": "Essential refactorings included in the commit plan. Each must be behavior-preserving.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string" },
+          "justification": {
+            "type": "string",
+            "description": "Why this is essential — what cannot be implemented correctly without it"
+          },
+          "behaviorChange": {
+            "type": "boolean",
+            "const": false,
+            "description": "Must always be false — refactoring must not change observable behavior"
+          }
+        },
+        "required": ["description", "justification", "behaviorChange"]
+      }
+    },
+    "cosmeticRefactoringNotes": {
+      "type": "array",
+      "description": "Quality observations in affected files. Not acted on by Developer — visible at Gate 1 for human decision.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file": { "type": "string" },
+          "observation": { "type": "string" },
+          "suggestion": { "type": "string" }
+        },
+        "required": ["file", "observation", "suggestion"]
+      }
+    },
+    "estimatedScope": {
+      "type": "string",
+      "enum": ["xs", "s", "m"],
+      "description": "xs = 1-2 commits, s = 3-5 commits, m = 6-10 commits. Exceeding m means WorkItem scope is too large — return to PO."
+    },
+    "decisionLog": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision": { "type": "string" },
+          "rationale": { "type": "string" }
+        },
+        "required": ["decision", "rationale"]
+      },
+      "description": "Key architectural decisions made during analysis with rationale",
+      "minItems": 1
+    },
+    "gateQuestion": {
+      "type": "string",
+      "description": "Single sentence directing the human's attention to the highest-risk decision in this plan"
+    }
+  },
+  "required": ["status", "issue", "workItemTitle", "approach", "filesRead", "commitPlan", "estimatedScope", "decisionLog", "gateQuestion"]
+}

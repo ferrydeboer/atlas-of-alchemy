@@ -1,0 +1,193 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DeveloperAgentOutput",
+  "description": "developer-output.json schema. Written to the run folder and updated after each step. Compatible with Review Agent input format.",
+  "oneOf": [
+    {
+      "type": "object",
+      "title": "Complete",
+      "description": "All steps committed to main. All acceptance criteria met with test evidence.",
+      "properties": {
+        "status": { "const": "complete" },
+        "issue": { "type": "integer" },
+        "designDocTitle": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "description": "One entry per commitPlan step. Updated in real-time after each step completes.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "order": { "type": "integer" },
+              "description": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["done", "failed", "skipped"]
+              },
+              "commitSha": {
+                "type": "string",
+                "description": "Full SHA of the commit that landed this step. Null if status is failed or skipped."
+              },
+              "filesChanged": {
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "Paths of files changed in this commit"
+              },
+              "testRun": {
+                "type": "object",
+                "description": "The specific test required by this step. Null if the step had no testRequired.",
+                "properties": {
+                  "class": { "type": ["string", "null"] },
+                  "method": { "type": ["string", "null"] },
+                  "passed": { "type": "boolean" }
+                },
+                "required": ["class", "method", "passed"]
+              },
+              "retriesUsed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 3,
+                "description": "Number of fix attempts used (0 = first attempt succeeded)"
+              }
+            },
+            "required": ["order", "description", "status", "retriesUsed"]
+          }
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "description": "Acceptance criteria from the WorkItem with evidence mapped by self-assessment.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Slug identifier matching the WorkItem criterion id"
+              },
+              "criterion": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["met", "failed", "pending"]
+              },
+              "evidence": {
+                "type": ["string", "null"],
+                "description": "TestClassName.TestMethodName — the test that demonstrates this criterion is satisfied"
+              }
+            },
+            "required": ["id", "criterion", "status", "evidence"]
+          }
+        },
+        "tokensNote": {
+          "type": "string",
+          "const": "self-reported — not metered",
+          "description": "Token usage is not metered by the Developer Agent. Cost data comes from run-log.md."
+        },
+        "overallResult": {
+          "type": "string",
+          "enum": ["all_criteria_met"],
+          "description": "all_criteria_met when every criterion has met status with evidence"
+        }
+      },
+      "required": ["status", "issue", "designDocTitle", "steps", "acceptanceCriteria", "tokensNote", "overallResult"]
+    },
+    {
+      "type": "object",
+      "title": "InProgress",
+      "description": "Implementation is running. Written at initialization and updated after each step.",
+      "properties": {
+        "status": { "const": "in_progress" },
+        "issue": { "type": "integer" },
+        "designDocTitle": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "order": { "type": "integer" },
+              "description": { "type": "string" },
+              "status": { "type": "string", "enum": ["done", "failed", "skipped"] },
+              "commitSha": { "type": ["string", "null"] },
+              "filesChanged": { "type": "array", "items": { "type": "string" } },
+              "testRun": {
+                "type": ["object", "null"],
+                "properties": {
+                  "class": { "type": ["string", "null"] },
+                  "method": { "type": ["string", "null"] },
+                  "passed": { "type": "boolean" }
+                }
+              },
+              "retriesUsed": { "type": "integer", "minimum": 0, "maximum": 3 }
+            },
+            "required": ["order", "description", "status", "retriesUsed"]
+          }
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "criterion": { "type": "string" },
+              "status": { "type": "string", "enum": ["met", "failed", "pending"] },
+              "evidence": { "type": ["string", "null"] }
+            },
+            "required": ["id", "criterion", "status", "evidence"]
+          }
+        },
+        "tokensNote": { "type": "string" },
+        "overallResult": { "type": "null" }
+      },
+      "required": ["status", "issue", "designDocTitle", "steps", "acceptanceCriteria", "tokensNote", "overallResult"]
+    },
+    {
+      "type": "object",
+      "title": "Escalated",
+      "description": "Implementation halted due to a plan error or persistent failure. Blocked branch created if failure was after implementation attempts.",
+      "properties": {
+        "status": { "const": "escalated" },
+        "issue": { "type": "integer" },
+        "designDocTitle": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "order": { "type": "integer" },
+              "description": { "type": "string" },
+              "status": { "type": "string", "enum": ["done", "failed", "skipped"] },
+              "commitSha": { "type": ["string", "null"] },
+              "filesChanged": { "type": "array", "items": { "type": "string" } },
+              "testRun": {
+                "type": ["object", "null"],
+                "properties": {
+                  "class": { "type": ["string", "null"] },
+                  "method": { "type": ["string", "null"] },
+                  "passed": { "type": "boolean" }
+                }
+              },
+              "retriesUsed": { "type": "integer", "minimum": 0, "maximum": 3 }
+            },
+            "required": ["order", "description", "status", "retriesUsed"]
+          }
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "criterion": { "type": "string" },
+              "status": { "type": "string", "enum": ["met", "failed", "pending"] },
+              "evidence": { "type": ["string", "null"] }
+            },
+            "required": ["id", "criterion", "status", "evidence"]
+          }
+        },
+        "tokensNote": { "type": "string" },
+        "overallResult": {
+          "type": "string",
+          "enum": ["partial", "failed"]
+        }
+      },
+      "required": ["status", "issue", "designDocTitle", "steps", "acceptanceCriteria", "tokensNote", "overallResult"]
+    }
+  ]
+}
