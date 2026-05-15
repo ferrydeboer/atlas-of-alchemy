@@ -6,19 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build the solution
-dotnet build InDepthDispenza.sln
+dotnet build AtlasOfAlchemy.sln
 
 # Run all unit tests
-dotnet test IndepthDispenza.Tests/IndepthDispenza.Tests.csproj
+dotnet test AtlasOfAlchemy.Tests/AtlasOfAlchemy.Tests.csproj
 
 # Run a single test by name
-dotnet test IndepthDispenza.Tests/IndepthDispenza.Tests.csproj --filter "FullyQualifiedName~PlaylistScanServiceTests.ScanPlaylistAsync_HappyPath"
+dotnet test AtlasOfAlchemy.Tests/AtlasOfAlchemy.Tests.csproj --filter "FullyQualifiedName~PlaylistScanServiceTests.ScanPlaylistAsync_HappyPath"
 
 # Run integration tests (requires Docker)
-dotnet test InDepthDispenza.IntegrationTests/InDepthDispenza.IntegrationTests.csproj
+dotnet test AtlasOfAlchemy.IntegrationTests/AtlasOfAlchemy.IntegrationTests.csproj
 
 # Run the Azure Functions locally
-cd InDepthDispenza.Functions && func start
+cd AtlasOfAlchemy.Functions && func start
 ```
 
 ## Architecture Overview
@@ -27,9 +27,9 @@ This is an Azure Functions backend for analyzing YouTube video transcripts using
 
 ### Project Structure
 
-- **InDepthDispenza.Functions**: Main Azure Functions app and domain logic
-- **IndepthDispenza.Tests**: Unit tests (NUnit + Moq + AutoFixture)
-- **InDepthDispenza.IntegrationTests**: Black-box integration tests using Testcontainers
+- **AtlasOfAlchemy.Functions**: Main Azure Functions app and domain logic
+- **AtlasOfAlchemy.Tests**: Unit tests (NUnit + Moq + AutoFixture)
+- **AtlasOfAlchemy.IntegrationTests**: Black-box integration tests using Testcontainers
 
 ### Layered Architecture
 
@@ -76,7 +76,7 @@ Modules: YouTube, YouTubeTranscriptIo, Azure Cosmos, Azure Storage, Azure OpenAI
 
 ## Configuration
 
-See `InDepthDispenza.Functions/CONFIGURATION.md` for detailed setup. Key points:
+See `AtlasOfAlchemy.Functions/CONFIGURATION.md` for detailed setup. Key points:
 
 - Uses standard .NET configuration with `appsettings.{Environment}.json`
 - Create `appsettings.Development.local.json` for local secrets (gitignored)
@@ -90,13 +90,13 @@ Integration tests use Testcontainers to run true black-box tests with:
 - Azurite for Azure Storage emulation
 - Cosmos DB emulator for persistence
 
-See `InDepthDispenza.IntegrationTests/docs/integration-testing-architecture.md` for details.
+See `AtlasOfAlchemy.IntegrationTests/docs/integration-testing-architecture.md` for details.
 
 ## Pre-Commit Checklist
 
 Before committing changes, always run:
 
-1. **Unit tests**: `dotnet test IndepthDispenza.Tests/IndepthDispenza.Tests.csproj`
-2. **Integration tests**: `dotnet test InDepthDispenza.IntegrationTests/InDepthDispenza.IntegrationTests.csproj`
+1. **Unit tests**: `dotnet test AtlasOfAlchemy.Tests/AtlasOfAlchemy.Tests.csproj`
+2. **Integration tests**: `dotnet test AtlasOfAlchemy.IntegrationTests/AtlasOfAlchemy.IntegrationTests.csproj`
 
 Integration tests are critical - they test the full pipeline including WireMock stubs for external APIs. Changes to domain logic (especially validation, error handling, or response parsing) often break integration tests even when unit tests pass.
