@@ -71,11 +71,11 @@ segment modules. See [V2 Architecture](architecture/v2-analysis-pipeline.md) and
 
 | Component | Location | Responsibility |
 |-----------|----------|----------------|
-| Azure Functions | `backend/InDepthDispenza.Functions/` | HTTP/queue handlers (thin layer) |
+| Azure Functions | `backend/AtlasOfAlchemy.Functions/` | HTTP/queue handlers (thin layer) |
 | Domain Logic | `backend/.../VideoAnalysis/` | Business orchestration, analysis |
 | Integrations | `backend/.../Integrations/` | External service modules |
-| Unit Tests | `backend/IndepthDispenza.Tests/` | NUnit + Moq + AutoFixture |
-| Integration Tests | `backend/InDepthDispenza.IntegrationTests/` | Testcontainers black-box tests |
+| Unit Tests | `backend/AtlasOfAlchemy.Tests/` | NUnit + Moq + AutoFixture |
+| Integration Tests | `backend/AtlasOfAlchemy.IntegrationTests/` | Testcontainers black-box tests |
 | Infrastructure | `infrastructure/` | Bicep templates for Azure |
 | Agent Definitions | `agents/` | Agent factory skills and schemas |
 
