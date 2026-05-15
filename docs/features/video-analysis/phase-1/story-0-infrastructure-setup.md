@@ -8,11 +8,11 @@
 
 ### Repository Structure
 ```
-indepth-dispenza/                    # Repository root
+atlas-of-alchemy/                    # Repository root
 ├── backend/                         # Azure Functions (.NET)
-│   ├── InDepthDispenza.Functions/
-│   ├── InDepthDispenza.Tests/
-│   └── InDepthDispenza.IntegrationTests/
+│   ├── AtlasOfAlchemy.Functions/
+│   ├── AtlasOfAlchemy.Tests/
+│   └── AtlasOfAlchemy.IntegrationTests/
 ├── frontend/                        # Future: Web UI (Phase 3)
 ├── docs/                           # Documentation
 ├── infrastructure/                 # Bicep templates (all Azure resources)
@@ -57,7 +57,7 @@ Extend `.github/workflows/dotnet.yml` or create separate `deploy.yml`:
 - [x] `docker-compose.yml` file at **repository root**
 - [x] Cosmos DB emulator accessible at `https://localhost:8081`
 - [x] Azurite runs with queues on port 10001, accessible from backend/frontend
-- [x] `backend/InDepthDispenza.Functions/local.settings.json.example` with connection strings
+- [x] `backend/AtlasOfAlchemy.Functions/local.settings.json.example` with connection strings
 - [x] Root-level `README.md` with instructions for: `docker-compose up -d`
 - [ ] Integration tests in `backend/` can connect to docker-compose services
 - [ ] Environment variables documented for both backend and future frontend
@@ -94,7 +94,7 @@ Extend `.github/workflows/dotnet.yml` or create separate `deploy.yml`:
 
 ## Dependencies
 - Existing GitHub workflow: `.github/workflows/dotnet.yml`
-- Existing Testcontainers setup in `InDepthDispenza.IntegrationTests`
+- Existing Testcontainers setup in `AtlasOfAlchemy.IntegrationTests`
 
 ## Enables
 - [Story 1: Transcript Retrieval & Storage](story-1-transcript-retrieval.md)

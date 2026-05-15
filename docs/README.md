@@ -1,4 +1,4 @@
-# InDepth Dispenza — Project Context
+# Atlas of Alchemy — Project Context
 
 This document provides the essential context for understanding the project's purpose, architecture, and boundaries.
 It serves as the primary input for the PO agent and is useful for any new contributor.
@@ -7,7 +7,7 @@ It serves as the primary input for the PO agent and is useful for any new contri
 
 ## Purpose
 
-InDepth Dispenza is a generic video testimonial analysis platform. Initially focused on Joe Dispenza content, the
+Atlas of Alchemy is a generic video testimonial analysis platform. Initially focused on Joe Dispenza content, the
 architecture supports multiple corpora (`dispenza`, `wim-hof`, `heartmath`) and multiple independent analysis types
 per video (achievements, timeline, language). The system scans YouTube playlists, extracts transcripts, and uses
 LLM-based segment analyzers to extract structured data.

@@ -47,7 +47,7 @@ jobs:
         run: |
           cd infrastructure
           az deployment sub create \
-            --name "indepth-dispenza-${{ inputs.environment }}-$(date +%Y%m%d-%H%M%S)" \
+            --name "atlas-of-alchemy-${{ inputs.environment }}-$(date +%Y%m%d-%H%M%S)" \
             --location canadacentral \
             --template-file main.bicep \
             --parameters parameters/${{ inputs.environment }}.parameters.json \
@@ -59,7 +59,7 @@ jobs:
         id: outputs
         run: |
           DEPLOYMENT_NAME=$(az deployment sub list \
-            --query "[?contains(name, 'indepth-dispenza-${{ inputs.environment }}')].name | [0]" \
+            --query "[?contains(name, 'atlas-of-alchemy-${{ inputs.environment }}')].name | [0]" \
             -o tsv)
 
           RESOURCE_GROUP=$(az deployment sub show \
