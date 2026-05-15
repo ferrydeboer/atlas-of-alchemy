@@ -240,6 +240,18 @@ dotnet test IndepthDispenza.Tests/IndepthDispenza.Tests.csproj
 Both must pass. A regression in a previously passing test is a failure — treat it
 the same as a failing step test.
 
+If unit tests pass: proceed to the integration test suite:
+
+```bash
+dotnet test InDepthDispenza.IntegrationTests/InDepthDispenza.IntegrationTests.csproj
+```
+
+Integration tests run against a real Cosmos emulator and WireMock stubs via
+Testcontainers — they catch contract and pipeline issues that unit tests miss.
+They are slower (~minutes) so they run once after unit tests pass, not on every
+fix retry. A failing integration test is a failure — treat it the same as a
+failing unit test.
+
 If all tests pass: proceed to Phase 8 — Commit.
 If any test fails: enter Phase 7 — Fix Loop.
 
@@ -255,7 +267,11 @@ Track the attempt count. On each fix attempt:
 3. Make the minimal targeted change to fix the specific error
 4. Re-run `dotnet format InDepthDispenza.sln`
 5. Re-run `dotnet build InDepthDispenza.sln`
-6. Re-run the test suite (step test + full suite)
+6. Re-run unit tests (step test + full unit suite)
+7. If unit tests pass, re-run integration tests
+
+Integration tests are included in the fix loop because a unit-green but
+integration-red state must not be committed.
 
 If attempt 3 also fails: proceed to Phase 7b — Blocked Branch Flow.
 
@@ -281,7 +297,7 @@ Create a blocked branch from the current HEAD with the broken state:
 ```bash
 git add -A
 git checkout -b {issue}.{order}-blocked
-git commit -m "chore: broken state for step {order} — see escalation.json"
+git commit -m "wip: broken state for step {order} — see escalation.json"
 git push origin {issue}.{order}-blocked
 ```
 
@@ -334,7 +350,22 @@ Commits:
 - `scope`: always `(#{issue})`
 - `description`: the step's `description` field, lowercased, imperative mood
 
-Examples:
+**Breaking changes:** If the step changes a public interface, removes a field, or
+alters observable behavior in a way that requires callers to change, append `!`
+after the type and add a `BREAKING CHANGE:` footer explaining what breaks and why:
+
+```
+feat!(#13): rename VideoId to YoutubeVideoId on CosmosStoredLlmDocument
+
+BREAKING CHANGE: VideoId field renamed to YoutubeVideoId. All readers of
+CosmosStoredLlmDocument must update field references.
+```
+
+The Architect should have flagged breaking changes in the DesignDoc `decisionLog`.
+If a step turns out to introduce a breaking change that was not flagged, note it
+in `developer-output.json` steps entry and use the `!` marker regardless.
+
+Examples (non-breaking):
 - `feat(#13): add VideoId field to CosmosStoredLlmDocument`
 - `refactor(#13): extract TranscriptFetcher from TranscriptAnalyzer`
 
